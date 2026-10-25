@@ -143,7 +143,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.92);
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
             display: flex;
@@ -536,7 +536,7 @@
     <!-- 다이내믹 아일랜드 & 상단 바 -->
     <div class="dynamic-island"></div>
     <div class="status-bar">
-        <span>01:22</span>
+        <span id="status-time">00:00</span>
         <div class="status-icons">
             <span>5G</span>
             <span>88%</span>
@@ -544,19 +544,19 @@
     </div>
 
     <!-- 1. 잠금 화면 -->
-    <div class="screen active" id="lock-screen">
+    <div class="screen active" id="lock-screen" onclick="showPasscode()">
         <div style="text-align: center;">
-            <div class="lock-date">10월 26일 월요일</div>
-            <div class="lock-clock">01:22</div>
+            <div class="lock-date" id="lock-date">10월 26일 월요일</div>
+            <div class="lock-clock" id="lock-clock">00:00</div>
         </div>
 
         <div class="swipe-hint">
             <span>🔒</span>
-            <span>위로 쓸어올려서 잠금 해제</span>
+            <span>터치하거나 위로 올리고 잠금 해제</span>
         </div>
 
         <!-- 암호 키패드 오버레이 -->
-        <div class="passcode-overlay" id="passcode-overlay">
+        <div class="passcode-overlay" id="passcode-overlay" onclick="event.stopPropagation()">
             <div class="passcode-title">암호 입력</div>
             <div class="passcode-dots">
                 <div class="dot"></div>
@@ -715,36 +715,35 @@
     let currentPasscode = "";
     const CORRECT_PASSCODE = "0526";
 
-    const lockScreen = document.getElementById('lock-screen');
-    const passcodeOverlay = document.getElementById('passcode-overlay');
+    // 실시간 날짜 및 시간 업데이트
+    function updateRealTime() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        
+        const timeStr = `${hours}:${minutes}`;
+        document.getElementById('status-time').innerText = timeStr;
+        document.getElementById('lock-clock').innerText = timeStr;
 
-    // 터치/클릭 감지
-    let startY = 0;
+        const months = now.getMonth() + 1;
+        const date = now.getDate();
+        const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+        const dayStr = days[now.getDay()];
 
-    lockScreen.addEventListener('mousedown', handleStart);
-    lockScreen.addEventListener('touchstart', handleStart);
-    lockScreen.addEventListener('mouseup', handleEnd);
-    lockScreen.addEventListener('touchend', handleEnd);
-
-    function handleStart(e) {
-        startY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+        document.getElementById('lock-date').innerText = `${months}월 ${date}일 ${dayStr}`;
     }
 
-    function handleEnd(e) {
-        const endY = e.type.includes('touch') ? e.changedTouches[0].clientY : e.clientY;
-        // 위로 20px 이상 슬라이드하거나 일반 터치 시 암호창 열기
-        if (startY - endY >= 0) {
-            showPasscode();
-        }
-    }
+    setInterval(updateRealTime, 1000);
+    updateRealTime();
 
+    // 잠금화면 및 암호창 제어
     function showPasscode() {
-        passcodeOverlay.classList.add('show');
+        document.getElementById('passcode-overlay').classList.add('show');
     }
 
     function hidePasscode(e) {
         if(e) e.stopPropagation();
-        passcodeOverlay.classList.remove('show');
+        document.getElementById('passcode-overlay').classList.remove('show');
         currentPasscode = "";
         updateDots();
     }
@@ -757,8 +756,8 @@
             if (currentPasscode.length === 4) {
                 setTimeout(() => {
                     if (currentPasscode === CORRECT_PASSCODE) {
-                        passcodeOverlay.classList.remove('show');
-                        lockScreen.classList.remove('active');
+                        document.getElementById('passcode-overlay').classList.remove('show');
+                        document.getElementById('lock-screen').classList.remove('active');
                         document.getElementById('home-screen').classList.add('active');
                     } else {
                         alert('암호가 올바르지 않습니다.');
