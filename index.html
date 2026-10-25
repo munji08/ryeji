@@ -51,6 +51,7 @@
             z-index: 1000;
             font-size: 14px;
             font-weight: 600;
+            pointer-events: none;
         }
 
         .dynamic-island {
@@ -63,7 +64,6 @@
             background-color: #000;
             border-radius: 20px;
             z-index: 1001;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .status-icons {
@@ -83,7 +83,7 @@
             background-color: #000000;
             display: flex;
             flex-direction: column;
-            transition: opacity 0.3s ease, transform 0.3s ease;
+            transition: opacity 0.3s ease;
             opacity: 0;
             pointer-events: none;
             z-index: 1;
@@ -103,7 +103,7 @@
             justify-content: space-between;
             padding: 60px 20px 40px;
             background-color: #000000;
-            touch-action: none;
+            cursor: pointer;
         }
 
         .lock-clock {
@@ -129,7 +129,6 @@
             color: rgba(255, 255, 255, 0.6);
             font-size: 14px;
             animation: pulse 2s infinite;
-            cursor: pointer;
         }
 
         @keyframes pulse {
@@ -144,20 +143,22 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 20;
+            z-index: 200;
             transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.1, 0.9, 0.2, 1);
+            transition: transform 0.35s cubic-bezier(0.1, 0.9, 0.2, 1);
+            pointer-events: none;
         }
 
         .passcode-overlay.show {
             transform: translateY(0);
+            pointer-events: auto;
         }
 
         .passcode-title {
@@ -549,7 +550,7 @@
             <div class="lock-clock">01:22</div>
         </div>
 
-        <div class="swipe-hint" onclick="showPasscode()">
+        <div class="swipe-hint">
             <span>🔒</span>
             <span>위로 쓸어올려서 잠금 해제</span>
         </div>
@@ -575,7 +576,7 @@
                 <div class="key-btn" onclick="pressKey('9')">9<span class="key-sub">WXYZ</span></div>
                 <div></div>
                 <div class="key-btn" onclick="pressKey('0')">0</div>
-                <div class="key-btn" style="font-size: 14px; background: transparent;" onclick="hidePasscode()">취소</div>
+                <div class="key-btn" style="font-size: 14px; background: transparent;" onclick="hidePasscode(event)">취소</div>
             </div>
         </div>
     </div>
@@ -583,7 +584,6 @@
     <!-- 2. 홈 화면 -->
     <div class="screen" id="home-screen">
         <div class="folder-grid">
-            <!-- 어플 폴더 1 -->
             <div>
                 <div class="app-folder" onclick="openFolder('social')">
                     <div class="folder-icon" style="background:#fee500; color:#000;">💬</div>
@@ -594,7 +594,6 @@
                 <div class="folder-label">소셜 & 미디어</div>
             </div>
 
-            <!-- 어플 폴더 2 -->
             <div>
                 <div class="app-folder" onclick="openFolder('sys')">
                     <div class="folder-icon" style="background:#30d158;">📞</div>
@@ -633,7 +632,6 @@
             <span style="font-size: 20px; font-weight: bold;">채팅</span>
         </div>
         <div class="chat-list">
-            <!-- 1. 황예지 언니 (2번 사진 프사) -->
             <div class="chat-item" onclick="openChat('yeji')">
                 <div class="chat-avatar">
                     <img src="1000070277.jpg" alt="황예지" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop'">
@@ -644,7 +642,6 @@
                 </div>
             </div>
 
-            <!-- 2. ⭐️ITZY⭐️ (1번 실루엣 프사, 5명) -->
             <div class="chat-item" onclick="openChat('itzy')">
                 <div class="chat-avatar">
                     <img src="1000070719.jpg" alt="ITZY" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop'">
@@ -655,7 +652,6 @@
                 </div>
             </div>
 
-            <!-- 3. 매니저님 -->
             <div class="chat-item" onclick="openChat('manager')">
                 <div class="chat-avatar">
                     <img src="1000070719.jpg" alt="매니저" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop'">
@@ -666,7 +662,6 @@
                 </div>
             </div>
 
-            <!-- 4. 지민언니 -->
             <div class="chat-item" onclick="openChat('jimin')">
                 <div class="chat-avatar">
                     <img src="1000070719.jpg" alt="지민언니" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop'">
@@ -677,7 +672,6 @@
                 </div>
             </div>
 
-            <!-- 5. 이채령 -->
             <div class="chat-item" onclick="openChat('chaeryeong')">
                 <div class="chat-avatar">
                     <img src="1000070719.jpg" alt="이채령" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop'">
@@ -689,7 +683,6 @@
             </div>
         </div>
 
-        <!-- 채팅방 내부 -->
         <div class="chat-room" id="chat-room">
             <div class="chat-room-header">
                 <span style="cursor: pointer; font-size: 18px;" onclick="closeChat()">❮</span>
@@ -722,18 +715,40 @@
     let currentPasscode = "";
     const CORRECT_PASSCODE = "0526";
 
-    // 스와이프 및 클릭 시 암호창 표시
-    function showPasscode() {
-        document.getElementById('passcode-overlay').classList.add('show');
+    const lockScreen = document.getElementById('lock-screen');
+    const passcodeOverlay = document.getElementById('passcode-overlay');
+
+    // 터치/클릭 감지
+    let startY = 0;
+
+    lockScreen.addEventListener('mousedown', handleStart);
+    lockScreen.addEventListener('touchstart', handleStart);
+    lockScreen.addEventListener('mouseup', handleEnd);
+    lockScreen.addEventListener('touchend', handleEnd);
+
+    function handleStart(e) {
+        startY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
     }
 
-    function hidePasscode() {
-        document.getElementById('passcode-overlay').classList.remove('show');
+    function handleEnd(e) {
+        const endY = e.type.includes('touch') ? e.changedTouches[0].clientY : e.clientY;
+        // 위로 20px 이상 슬라이드하거나 일반 터치 시 암호창 열기
+        if (startY - endY >= 0) {
+            showPasscode();
+        }
+    }
+
+    function showPasscode() {
+        passcodeOverlay.classList.add('show');
+    }
+
+    function hidePasscode(e) {
+        if(e) e.stopPropagation();
+        passcodeOverlay.classList.remove('show');
         currentPasscode = "";
         updateDots();
     }
 
-    // 암호 입력 버튼
     function pressKey(num) {
         if (currentPasscode.length < 4) {
             currentPasscode += num;
@@ -742,8 +757,8 @@
             if (currentPasscode.length === 4) {
                 setTimeout(() => {
                     if (currentPasscode === CORRECT_PASSCODE) {
-                        hidePasscode();
-                        document.getElementById('lock-screen').classList.remove('active');
+                        passcodeOverlay.classList.remove('show');
+                        lockScreen.classList.remove('active');
                         document.getElementById('home-screen').classList.add('active');
                     } else {
                         alert('암호가 올바르지 않습니다.');
@@ -766,7 +781,6 @@
         });
     }
 
-    // 폴더 및 앱 관리
     function openFolder(name) {
         document.getElementById('folder-modal').classList.add('active');
     }
@@ -794,7 +808,6 @@
         stopCamera();
     }
 
-    // 채팅방 제어
     const chatData = {
         'yeji': {
             title: '황예지 언니',
@@ -856,7 +869,6 @@
         document.getElementById('chat-room').classList.remove('active');
     }
 
-    // 카메라
     let mediaStream = null;
     async function startCamera() {
         try {
