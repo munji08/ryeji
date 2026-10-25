@@ -367,7 +367,7 @@
             justify-content: center;
         }
 
-        .chat-avatar img {
+        .chat-avatar img, .chat-avatar svg {
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -632,9 +632,18 @@
             <span style="font-size: 20px; font-weight: bold;">채팅</span>
         </div>
         <div class="chat-list">
+            <!-- 1. 황예지 언니 (황예지 전용 프사) -->
             <div class="chat-item" onclick="openChat('yeji')">
                 <div class="chat-avatar">
-                    <img src="1000070277.jpg" alt="황예지" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop'">
+                    <svg viewBox="0 0 100 100" width="100%" height="100%">
+                        <rect width="100" height="100" fill="#e2c2b3"/>
+                        <circle cx="50" cy="45" r="28" fill="#fce4d6"/>
+                        <path d="M 20 28 Q 50 10 80 28 Q 85 60 75 80 Q 50 85 25 80 Z" fill="#4a2e1d"/>
+                        <circle cx="40" cy="45" r="3" fill="#222"/>
+                        <path d="M 58 45 Q 63 40 68 45" stroke="#222" stroke-width="2" fill="none"/>
+                        <path d="M 45 56 Q 50 60 55 56" stroke="#d9534f" stroke-width="2" fill="none"/>
+                        <path d="M 10 100 Q 50 70 90 100" fill="#333"/>
+                    </svg>
                 </div>
                 <div class="chat-info">
                     <div class="chat-title">황예지 언니</div>
@@ -642,9 +651,14 @@
                 </div>
             </div>
 
+            <!-- 2. ⭐️ITZY⭐️ (파란색 기본 실루엣) -->
             <div class="chat-item" onclick="openChat('itzy')">
                 <div class="chat-avatar">
-                    <img src="1000070719.jpg" alt="ITZY" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop'">
+                    <svg viewBox="0 0 100 100" width="100%" height="100%">
+                        <rect width="100" height="100" fill="#88a1d7"/>
+                        <circle cx="50" cy="38" r="18" fill="#5873b2"/>
+                        <path d="M 22 88 Q 50 55 78 88 Z" fill="#5873b2"/>
+                    </svg>
                 </div>
                 <div class="chat-info">
                     <div class="chat-title">⭐️ITZY⭐️ <span class="chat-badge">5</span></div>
@@ -652,9 +666,14 @@
                 </div>
             </div>
 
+            <!-- 3. 매니저님 -->
             <div class="chat-item" onclick="openChat('manager')">
                 <div class="chat-avatar">
-                    <img src="1000070719.jpg" alt="매니저" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop'">
+                    <svg viewBox="0 0 100 100" width="100%" height="100%">
+                        <rect width="100" height="100" fill="#88a1d7"/>
+                        <circle cx="50" cy="38" r="18" fill="#5873b2"/>
+                        <path d="M 22 88 Q 50 55 78 88 Z" fill="#5873b2"/>
+                    </svg>
                 </div>
                 <div class="chat-info">
                     <div class="chat-title">매니저님</div>
@@ -662,9 +681,14 @@
                 </div>
             </div>
 
+            <!-- 4. 지민언니 -->
             <div class="chat-item" onclick="openChat('jimin')">
                 <div class="chat-avatar">
-                    <img src="1000070719.jpg" alt="지민언니" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop'">
+                    <svg viewBox="0 0 100 100" width="100%" height="100%">
+                        <rect width="100" height="100" fill="#88a1d7"/>
+                        <circle cx="50" cy="38" r="18" fill="#5873b2"/>
+                        <path d="M 22 88 Q 50 55 78 88 Z" fill="#5873b2"/>
+                    </svg>
                 </div>
                 <div class="chat-info">
                     <div class="chat-title">지민언니</div>
@@ -672,9 +696,14 @@
                 </div>
             </div>
 
+            <!-- 5. 이채령 -->
             <div class="chat-item" onclick="openChat('chaeryeong')">
                 <div class="chat-avatar">
-                    <img src="1000070719.jpg" alt="이채령" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop'">
+                    <svg viewBox="0 0 100 100" width="100%" height="100%">
+                        <rect width="100" height="100" fill="#88a1d7"/>
+                        <circle cx="50" cy="38" r="18" fill="#5873b2"/>
+                        <path d="M 22 88 Q 50 55 78 88 Z" fill="#5873b2"/>
+                    </svg>
                 </div>
                 <div class="chat-info">
                     <div class="chat-title">이채령</div>
@@ -714,6 +743,41 @@
 <script>
     let currentPasscode = "";
     const CORRECT_PASSCODE = "0526";
+
+    // 인앱 뒤로가기 상태 관리 (History API)
+    function pushAppState(screenId) {
+        history.pushState({ screen: screenId }, "");
+    }
+
+    window.addEventListener('popstate', function(e) {
+        const chatRoom = document.getElementById('chat-room');
+        const folderModal = document.getElementById('folder-modal');
+        const activeScreen = document.querySelector('.screen.active');
+
+        // 1. 채팅방 열려있을 때 뒤로가기 ➔ 채팅목록
+        if (chatRoom && chatRoom.classList.contains('active')) {
+            chatRoom.classList.remove('active');
+            return;
+        }
+
+        // 2. 폴더 모달 열려있을 때 뒤로가기 ➔ 홈 화면
+        if (folderModal && folderModal.classList.contains('active')) {
+            folderModal.classList.remove('active');
+            return;
+        }
+
+        // 3. 어플 화면(카카오톡/카메라 등)일 때 뒤로가기 ➔ 홈 화면
+        if (activeScreen && activeScreen.id !== 'home-screen' && activeScreen.id !== 'lock-screen') {
+            goHome();
+            return;
+        }
+
+        // 4. 홈 화면일 때 뒤로가기 ➔ 잠금화면
+        if (activeScreen && activeScreen.id === 'home-screen') {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('lock-screen').classList.add('active');
+        }
+    });
 
     // 실시간 날짜 및 시간 업데이트
     function updateRealTime() {
@@ -759,6 +823,7 @@
                         document.getElementById('passcode-overlay').classList.remove('show');
                         document.getElementById('lock-screen').classList.remove('active');
                         document.getElementById('home-screen').classList.add('active');
+                        pushAppState('home-screen');
                     } else {
                         alert('암호가 올바르지 않습니다.');
                         currentPasscode = "";
@@ -782,6 +847,7 @@
 
     function openFolder(name) {
         document.getElementById('folder-modal').classList.add('active');
+        pushAppState('folder');
     }
 
     function closeFolder(e) {
@@ -794,8 +860,10 @@
         
         if (appId === 'kakao') {
             document.getElementById('kakao-app').classList.add('active');
+            pushAppState('kakao');
         } else if (appId === 'camera') {
             document.getElementById('camera-app').classList.add('active');
+            pushAppState('camera');
             startCamera();
         }
     }
@@ -862,6 +930,7 @@
         });
 
         room.classList.add('active');
+        pushAppState('chat-room');
     }
 
     function closeChat() {
